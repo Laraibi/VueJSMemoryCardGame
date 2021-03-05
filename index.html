@@ -109,9 +109,9 @@
             },
             methods: {
                 change() {
-                    if (this.mysrc !== 'back.jpg') {
+                    if (this.mysrc !== 'src/back.jpg') {
                         this.origin = this.mysrc;
-                        this.mysrc = "back.jpg";
+                        this.mysrc = "src/back.jpg";
                     } else {
                         this.mysrc = this.origin;
                         // this.parent.displayed.push(this.origin);
@@ -154,7 +154,7 @@
                         setTimeout(() => {
                             for (i = 0; i < count; i++) {
                                 if (!this.Guessed.includes(this.$children[i].mysrc)) {
-                                    this.$children[i].mysrc = 'back.jpg';
+                                    this.$children[i].mysrc = 'src/back.jpg';
                                 }
                             }
                         }, 500);
@@ -163,8 +163,8 @@
             },
             mounted: function () {
                 for (i = 1; i < 11; i++) {
-                    this.images.push('img' + i + '.jpg');
-                    this.images.push('img' + i + '.jpg');
+                    this.images.push('src/img' + i + '.jpg');
+                    this.images.push('src/img' + i + '.jpg');
                 }
                 this.images = shuffle(this.images);
             }
