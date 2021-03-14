@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        img {
+            height: 300px;
+            width: 200px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div>
+            <input type="text" @change="loadImages" v-model.number="ImagesCount">
+        </div>
+        <Comp v-for="(x,key) in Sources" :key="key" :Link="x" />
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
+    <script>
+        function shuffle(array) {
+            var currentIndex = array.length, temporaryValue, randomIndex;
+
+            // While there remain elements to shuffle...
+            while (0 !== currentIndex) {
+
+                // Pick a remaining element...
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex -= 1;
+
+                // And swap it with the current element.
+                temporaryValue = array[currentIndex];
+                array[currentIndex] = array[randomIndex];
+                array[randomIndex] = temporaryValue;
+            }
+
+            return array;
+        }
+        const Comp = Vue.component('Comp', {
+            template: `<img @click="change" :src="this.rndSrc"/>`,
+            props: {
+                Link: {
+                    default: '',
+                    type: String
+                }
+            },
+            data() {
+                return {
+                    origin: '',
+                    rndSrc: ''
+                }
+            },
+            methods: {
+                change: function () {
+                    if (this.rndSrc == 'src/back.jpg') {
+                        this.rndSrc = this.origin;
+                    } else {
+                        this.origin = this.rndSrc;
+                        this.rndSrc = 'src/back.jpg';
+                    }
+                }
+            },
+            mounted: function () {
+                this.rndSrc = this.Link;
+            }
+        });
+        const app = new Vue({
+            el: '#app',
+            components: {
+                Comp
+            },
+            data: {
+                ImagesCount: 2,
+                Sources: []
+            },
+            created: async function () {
+                await this.loadImages();
+            },
+            methods: {
+                loadImages: async function () {
+                    let Links = [];
+                    this.Sources =[];
+                    for (i = 0; i < this.ImagesCount; i++) {
+                        Links[i] =  await fetch('https://picsum.photos/200/300').then(res => res.blob());
+                    }
+                    await Promise.all(Links).then((values) => {
+                        values.forEach((value, index) => {
+                            url = URL.createObjectURL(value);
+                            this.Sources.push(url);
+                        });
+                    });
+                    // this.Sources = this.Sources.concat(this.Sources);
+                    // this.Sources = shuffle(this.Sources);
+                    // this.Links.push(this.Links.values);
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
