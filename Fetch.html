@@ -19,7 +19,14 @@
         <div>
             <input type="text" @change="loadImages" v-model.number="ImagesCount">
         </div>
-        <Comp v-for="(x,key) in Sources" :key="key" :Link="x" />
+        <div>
+            <Comp v-for="(x,key) in Shufled" :key="key" :id="key" :Link="x" />
+        </div>
+        <div>
+            <!-- <Comp v-for="(x,key) in ImagesIndexs" :key="key" :Link="x" /> -->
+        </div>
+        
+        <!-- <p v-for="(x,key) in ImagesIndexs" :key="key" :Link="Sources[x]">{{Sources[x]}}</p> </p> -->
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
     <script>
@@ -46,7 +53,7 @@
             props: {
                 Link: {
                     default: '',
-                    type: String
+                    type: Number
                 }
             },
             data() {
@@ -66,6 +73,7 @@
                 }
             },
             mounted: function () {
+                // console.log(this.$parent.Sources);
                 this.rndSrc = this.Link;
             }
         });
@@ -75,18 +83,25 @@
                 Comp
             },
             data: {
-                ImagesCount: 2,
-                Sources: []
+                ImagesCount: 10,
+                Sources: [],
+                Shufled: [],
             },
             created: async function () {
                 await this.loadImages();
             },
             methods: {
+                getSource(index){
+                    return this.Sources[index];
+                },
                 loadImages: async function () {
                     let Links = [];
                     this.Sources =[];
+                    // this.Sources =[];
+                    this.ImagesIndexs =[];
                     for (i = 0; i < this.ImagesCount; i++) {
                         Links[i] =  await fetch('https://picsum.photos/200/300').then(res => res.blob());
+                        this.ImagesIndexs.push(i,i);
                     }
                     await Promise.all(Links).then((values) => {
                         values.forEach((value, index) => {
@@ -94,9 +109,9 @@
                             this.Sources.push(url);
                         });
                     });
-                    // this.Sources = this.Sources.concat(this.Sources);
-                    // this.Sources = shuffle(this.Sources);
-                    // this.Links.push(this.Links.values);
+                    this.ImagesIndexs=shuffle(this.ImagesIndexs);
+                    this.Sources = this.Sources.concat(this.Sources);
+                    this.Shufled=shuffle(this.Sources);
                 }
             }
         });
